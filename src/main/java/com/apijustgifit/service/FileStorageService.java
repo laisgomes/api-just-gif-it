@@ -2,6 +2,7 @@ package com.apijustgifit.service;
 
 import com.apijustgifit.domain.FileStorageProperties;
 import com.apijustgifit.domain.StorageProperties;
+import com.apijustgifit.validation.FileNotFoundException;
 import com.apijustgifit.validation.FileStorageException;
 import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 import org.slf4j.Logger;
@@ -62,7 +63,7 @@ public class FileStorageService {
 
     }
 
-    public Resource loadFile(String fileName) throws MalformedURLException {
+    public Resource loadFile(String fileName){
 
         Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
 
@@ -70,10 +71,12 @@ public class FileStorageService {
             Resource resource = new UrlResource(filePath.toUri());
             if (resource.exists()){
                 return resource;
+            }else {
+                throw new FileNotFoundException("File not found "+ fileName);
             }
         } catch (MalformedURLException e) {
-            throw e;
+            throw new FileNotFoundException("File not found "+ fileName, e);
         }
-        return null;
+
     }
 }

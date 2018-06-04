@@ -2,10 +2,12 @@ package com.apijustgifit;
 
 import com.apijustgifit.domain.StorageProperties;
 import com.apijustgifit.service.FileStorageService;
+import com.apijustgifit.validation.FileNotFoundException;
 import com.apijustgifit.validation.FileStorageException;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Nested;
 import org.mockito.Mock;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -22,7 +24,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-
+@Nested
 public class FileStorageServiceTests {
     private FileStorageService fileStorageService;
 
@@ -109,6 +111,20 @@ public class FileStorageServiceTests {
 
         assertThat(thrown).isInstanceOf(FileStorageException.class)
                 .hasMessageContaining("Could not store file " + fileInvalid.getOriginalFilename() + ". Please try again!");
+
+    }
+
+    @Test
+    public void shouldReturnErrorMessageWhenFileNotExistInDirectory() {
+        testFileName = "ThisFileNotExist";
+        Path filePath = Paths.get(fileStorageProperties.getUploadDir()).resolve(testFileName);
+
+        Throwable thrown = catchThrowable(() -> {
+            fileStorageService.loadFile(testFileName);
+        });
+
+        assertThat(thrown).isInstanceOf(FileNotFoundException.class)
+                .hasMessageContaining("File not found " + testFileName);
 
     }
 
