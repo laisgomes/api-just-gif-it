@@ -1,10 +1,12 @@
 package com.apijustgifit;
 
+import com.apijustgifit.domain.FileStorageProperties;
 import com.apijustgifit.domain.StorageProperties;
 import com.apijustgifit.service.FileStorageService;
 import com.apijustgifit.validation.FileNotFoundException;
 import com.apijustgifit.validation.FileStorageException;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Nested;
@@ -117,7 +119,6 @@ public class FileStorageServiceTests {
     @Test
     public void shouldReturnErrorMessageWhenFileNotExistInDirectory() {
         testFileName = "ThisFileNotExist";
-        Path filePath = Paths.get(fileStorageProperties.getUploadDir()).resolve(testFileName);
 
         Throwable thrown = catchThrowable(() -> {
             fileStorageService.loadFile(testFileName);
@@ -128,5 +129,11 @@ public class FileStorageServiceTests {
 
     }
 
-
+    @After
+    public void tearDown() throws Exception {
+        when(fileStorageProperties.getUploadDir())
+                .thenReturn("uploads/");
+        File deleteFile = new File(fileStorageProperties.getUploadDir());
+        FileUtils.cleanDirectory(deleteFile);
+    }
 }
