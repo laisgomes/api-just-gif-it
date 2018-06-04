@@ -2,6 +2,7 @@ package com.apijustgifit;
 
 import com.apijustgifit.domain.StorageProperties;
 import com.apijustgifit.service.FileStorageService;
+import com.apijustgifit.validation.FileStorageException;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +17,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIOException;
+import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -69,6 +71,21 @@ public class FileStorageServiceTests {
         FileUtils.cleanDirectory(deleteFile);
 
     }
+    @Test
+    public void shouldReturnErroMessageWhenFileContainsInvalidCharacters() throws IOException {
 
+	    MockMultipartFile fileInvalid = new MockMultipartFile(
+                "myfiletest",
+               "..",
+                "video/mp4",
+                inputStream);
 
+        Throwable thrown = catchThrowable(() -> {
+            fileStorageService.storeFile(fileInvalid);
+        });
+
+        assertThat(thrown).isInstanceOf(FileStorageException.class)
+                .hasMessageContaining("Sorry! Filename contains invalid path sequence ..");
+
+    }
 }
