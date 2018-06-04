@@ -46,8 +46,8 @@ public class FileStorageService {
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
             return fileName;
 
-        }catch (IOException e) {
-            throw e;
+        }catch (IOException ex) {
+            throw new FileStorageException("Could not store file " + fileName+ ". Please try again!", ex);
         }
 
     }
