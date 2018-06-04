@@ -3,7 +3,7 @@ package com.apijustgifit.domain;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "file")
-public class FileStorageProperties {
+public class FileStorageProperties implements StorageProperties{
 
     private String uploadDir;
 
@@ -14,3 +14,4 @@ public class FileStorageProperties {
     public void setUploadDir(String uploadDir) {
         this.uploadDir = uploadDir;
     }
+}
