@@ -5,10 +5,8 @@ import com.apijustgifit.service.FileStorageService;
 import com.apijustgifit.validation.FileNotFoundException;
 import com.apijustgifit.validation.FileStorageException;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Nested;
 import org.mockito.Mock;
 import org.springframework.core.io.Resource;
@@ -26,11 +24,10 @@ import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@Nested
 public class FileStorageServiceTests {
     private FileStorageService fileStorageService;
 
-    private StorageProperties fileStorageProperties;
+    private static StorageProperties fileStorageProperties;
 
     private MockMultipartFile file;
     @Mock
@@ -62,7 +59,7 @@ public class FileStorageServiceTests {
         assertThat(fileResponse).contains("NameOfFileTest");
 
     }
-@Ignore
+
     @Test
     public void shouldLoadReadFileInDirectory() throws IOException {
         testFileName = "NameOfFileTest";
@@ -130,11 +127,11 @@ public class FileStorageServiceTests {
 
     }
 
-    @After
+    @AfterAll
     public void tearDown() throws Exception {
         when(fileStorageProperties.getUploadDir())
                 .thenReturn("uploads/");
         File deleteFile = new File(fileStorageProperties.getUploadDir());
-        FileUtils.cleanDirectory(deleteFile);
+      FileUtils.cleanDirectory(deleteFile);
     }
 }
